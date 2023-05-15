@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'daphne',
     'chat',
+    'rpcecho',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,5 +134,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+    },
+    "nameko": {
+        "BACKEND": "mysite.nameko_channel.NamekoChannelLayer",
+        "CONFIG": {
+            "nameko_config": {
+                "AMQP_URI": "amqp://guest:guest@localhost:5672"
+            },
+            "context": {
+                "app_name": "easywp",
+                "client_id": "application_123",
+                "client_secret": "83218ac34c1834c26781fe4bde918ee4",
+            },
+            "predefined_services": (
+                "mysite.nameko_services.greeting_service.GreetingService",
+                "rpcecho.consumers.ChatConsumer"
+            ),
+        },
+    },
 }
